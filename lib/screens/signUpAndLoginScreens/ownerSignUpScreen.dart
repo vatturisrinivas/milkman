@@ -45,9 +45,10 @@ class _ownerSignUpScreenState extends State<ownerSignUpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(title: Text("Milkman Signup",style: TextStyle(color: Colors.white),),backgroundColor: Colors.black,),
+      //appBar: AppBar(title: Text("Milkman Signup",style: TextStyle(color: Colors.white),),backgroundColor: Colors.black,),
       body: Column(
         children: [
+          Container(height: 200,width: double.infinity,color: Colors.black,child: Center(child: Text("Milkman Signup",style: TextStyle(color: Colors.white,fontSize: 35),),),),
           Expanded(
             child: Container(
               decoration: BoxDecoration(

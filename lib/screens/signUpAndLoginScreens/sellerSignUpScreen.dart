@@ -65,22 +65,23 @@ class _createSellerDialogState extends State<createSellerDialog> {
         children: [
           TextField(
             controller: _nameController,
-            decoration: InputDecoration(labelText: "Seller Name", enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20))),
+            decoration: InputDecoration(labelText: "Seller Name", enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20))),
           ),
           const SizedBox(height: 10),
           TextField(
             controller: _passwordController,
-            decoration: InputDecoration(labelText: "Password", enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20))),
+            decoration: InputDecoration(labelText: "Password", enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20))),
           ),
           const SizedBox(height: 10),
           TextField(
             controller: _sellerPhoneController,
-            decoration: InputDecoration(labelText: "Seller PhoneNo.", enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20))),
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(labelText: "Seller PhoneNo.", enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),),
           ),
           const SizedBox(height: 10),
           TextFormField(
             controller: _ownerPhone,
-            decoration: InputDecoration(labelText: "Owner Phone No.", enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20))),
+            decoration: InputDecoration(labelText: "Milkman Phone No.", enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20))),
             readOnly: true, // Read-only field
           ),
         ],

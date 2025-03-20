@@ -48,9 +48,10 @@ class _ownerLoginScreenState extends State<ownerLoginScreen> {
     screenwidth=MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(title: Text("Milkman Login",style: TextStyle(color: Colors.white),),backgroundColor: Colors.black,),
+      //appBar: AppBar(title: Center(child: Text("Milkman Login",style: TextStyle(color: Colors.white),)),backgroundColor: Colors.black,),
       body: Column(
         children: [
+          Container(height: 200,width: double.infinity,color: Colors.black,child: Center(child: Text("Milkman Login",style: TextStyle(color: Colors.white,fontSize: 35),),),),
           Expanded(
             child: Container(
               decoration: BoxDecoration(

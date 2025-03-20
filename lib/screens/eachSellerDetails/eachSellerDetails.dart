@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:milkman/widgets/billingByTheOwner.dart';
@@ -15,6 +16,7 @@ class eachSellerDetailsScreen extends StatefulWidget {
 
 class _eachSellerDetailsScreenState extends State<eachSellerDetailsScreen> {
   TextEditingController milkController = TextEditingController();
+  TextEditingController lactoMetreController = TextEditingController();
   String selectedTime = 'morning'; // Default selection
   late PageController _pageController;
   DateTime currentDate =DateTime.now();
@@ -36,22 +38,35 @@ class _eachSellerDetailsScreenState extends State<eachSellerDetailsScreen> {
   // Function to add milk entry for morning or evening
   Future<void> addMilkEntry() async {
     double amount = double.tryParse(milkController.text) ?? 0;
+    double lactometerValue = double.tryParse(lactoMetreController.text) ?? 0;
+
     if (amount <= 0) return;
 
     String dateId = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+    Map<String, dynamic> dataToUpdate = {
+      selectedTime: amount, // 'morning' or 'evening'
+      'timestamp': FieldValue.serverTimestamp(),
+    };
+
+    //Only add lactometer value if it's entered
+    if (lactoMetreController.text.isNotEmpty && lactometerValue != null && lactometerValue > 0) {
+      dataToUpdate['${selectedTime}_lactometer'] = lactometerValue;
+    }
 
     await FirebaseFirestore.instance
         .collection('sellers')
         .doc(widget.sellerPhone)
         .collection('milkData')
         .doc(dateId)
-        .set({
-      selectedTime: amount, // 'morning' or 'evening'
-      'timestamp': FieldValue.serverTimestamp(),
-    },
-        SetOptions(merge: true));
+        .set(dataToUpdate, SetOptions(merge: true));
+        // .set({
+        //   selectedTime: amount, // 'morning' or 'evening'
+        //   'timestamp': FieldValue.serverTimestamp(),
+        // }, SetOptions(merge: true));
 
     milkController.clear();
+    lactoMetreController.clear();
     fetchMilkEntries();
     // fetchMonthlySummary();
   }
@@ -90,10 +105,14 @@ class _eachSellerDetailsScreenState extends State<eachSellerDetailsScreen> {
         var data = doc.data() as Map<String, dynamic>? ?? {};
         double morning = (data['morning'] ?? 0).toDouble();
         double evening = (data['evening'] ?? 0).toDouble();
+        double? morningLacto = data.containsKey('morning_lactometer') ? data['morning_lactometer'].toDouble() : null;
+        double? eveningLacto = data.containsKey('evening_lactometer') ? data['evening_lactometer'].toDouble() : null;
 
         milkEntries[doc.id] = {
           'morning': morning,
+          'morning_lactometer': morningLacto,
           'evening': evening,
+          'evening_lactometer': eveningLacto,
         };
 
         totalMorningMilk += morning;
@@ -141,7 +160,9 @@ class _eachSellerDetailsScreenState extends State<eachSellerDetailsScreen> {
       monthData.add({
         'date': dateStr,
         'morning': milkEntries[dateStr]?['morning'] ?? 0,
+        'morning_lactometer': milkEntries[dateStr]?['morning_lactometer'] ?? '-',
         'evening': milkEntries[dateStr]?['evening'] ?? 0,
+        'evening_lactometer': milkEntries[dateStr]?['evening_lactometer'] ?? '-',
       });
     }
 
@@ -251,6 +272,31 @@ class _eachSellerDetailsScreenState extends State<eachSellerDetailsScreen> {
               ],
             ),
           ),
+          SizedBox(height: 10,),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                Text('Enter Lactometre value(Optional)'),
+                Spacer(),
+                SizedBox(
+                  height: 40,
+                  width: 100,
+                  child: TextField(
+                    controller: lactoMetreController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: "Null",
+                      border: OutlineInputBorder( // Default border
+                        borderRadius: BorderRadius.circular(8), // Rounded corners
+                        borderSide: BorderSide(color: Colors.grey, width: 2),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
@@ -303,6 +349,20 @@ class _eachSellerDetailsScreenState extends State<eachSellerDetailsScreen> {
                       child: ListTile(
                         title: Text(entry['date'],style: TextStyle(color: Colors.white),),
                         subtitle: Text("Morning: ${entry['morning']} L | Evening: ${entry['evening']} L",style: TextStyle(color: Colors.white),),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              "Metre",  // Label
+                              style: TextStyle(color: Colors.white, fontSize: 12),
+                            ),
+                            Text(
+                              "${entry['morning_lactometer'] ?? '-'} | ${entry['evening_lactometer'] ?? '-'}",
+                              style: TextStyle(color: Colors.white, fontSize: 15),
+                            ),
+                          ],
+                        ),
                       ),
                       color: Colors.black87,
                     );

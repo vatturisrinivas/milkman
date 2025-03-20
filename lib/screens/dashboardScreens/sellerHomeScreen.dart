@@ -88,9 +88,13 @@ class _sellerHomeScreenState extends State<sellerHomeScreen> {
       milkEntries = {};
       for (var doc in snapshot.docs) {
         var data = doc.data() as Map<String, dynamic>? ?? {};
+        double? morningLacto = data.containsKey('morning_lactometer') ? data['morning_lactometer'].toDouble() : null;
+        double? eveningLacto = data.containsKey('evening_lactometer') ? data['evening_lactometer'].toDouble() : null;
         milkEntries[doc.id] = {
           'morning': data['morning'] ?? 0,
+          'morning_lactometer': morningLacto,
           'evening': data['evening'] ?? 0,
+          'evening_lactometer': eveningLacto,
         };
       }
     });
@@ -129,7 +133,9 @@ class _sellerHomeScreenState extends State<sellerHomeScreen> {
       monthData.add({
         'date': dateStr,
         'morning': milkEntries[dateStr]?['morning'] ?? 0,
+        'morning_lactometer': milkEntries[dateStr]?['morning_lactometer'] ?? '-',
         'evening': milkEntries[dateStr]?['evening'] ?? 0,
+        'evening_lactometer': milkEntries[dateStr]?['evening_lactometer'] ?? '-',
       });
     }
 
@@ -215,6 +221,20 @@ class _sellerHomeScreenState extends State<sellerHomeScreen> {
                 child: ListTile(
                   title: Text(entry['date'],style: TextStyle(color: Colors.white),),
                   subtitle: Text("Morning: ${entry['morning']} L | Evening: ${entry['evening']} L",style: TextStyle(color: Colors.white),),
+                  trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        "Metre",
+                        style: TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                      Text(
+                        "${entry['morning_lactometer'] ?? '-'} | ${entry['evening_lactometer'] ?? '-'}",
+                        style: TextStyle(color: Colors.white,fontSize: 15),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
