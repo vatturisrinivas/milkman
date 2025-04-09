@@ -51,9 +51,18 @@ class AddingAndFetchingSellersData {
         _totalMorningAmount = (data['totalMorningCost'] ?? 0).toDouble();
         _totalEveningAmount = (data['totalEveningCost'] ?? 0).toDouble();
         _grandTotal = (data['grandTotal'] ?? 0).toDouble();
+      } else {
+        // 👇 RESET all values to zero if data doesn't exist
+        _morningRatePerLitre = 0;
+        _eveningRatePerLitre = 0;
+        _morningMilkAmount = 0;
+        _eveningMilkAmount = 0;
+        _totalMorningAmount = 0;
+        _totalEveningAmount = 0;
+        _grandTotal = 0;
       }
     } catch (e) {
-      print("Error fetching seller data: $e");
+        print("Error fetching seller data: $e");
     }
   }
 }

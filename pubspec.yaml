@@ -30,14 +30,27 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  # Firebase & Auth
   firebase_core:
   firebase_auth:
   cloud_firestore:
+
+  # Utils
   crypto:
   shared_preferences:
   intl:
   provider:
+  pdf: ^3.10.4
+  path_provider:
+  open_filex:
 
+  # QR Code
+  qr_code_scanner: ^1.0.1
+  qr_flutter: ^4.0.0
+
+  # UI
+  animated_bottom_navigation_bar:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

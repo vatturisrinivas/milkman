@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:milkman/screens/signUpAndLoginScreens/ownerandsellerloginpage.dart';
+import 'package:milkman/widgets/QRManager.dart';
 import 'package:milkman/widgets/addingAndFetchingSellersData.dart';
 import 'package:milkman/widgets/billedForTheSeller.dart';
 import 'package:milkman/widgets/userManager.dart';
@@ -42,7 +43,7 @@ class _sellerHomeScreenState extends State<sellerHomeScreen> {
     baseMonthIndex = (currentDate.year * 12 + currentDate.month) - (2024 * 12 + 1); // Relative to Jan 2024
     _pageController = PageController(initialPage: baseMonthIndex);
     fetchSellerPhoneAndName();
-    fetchSellerData();
+    //fetchSellerData();
   }
 
 
@@ -148,27 +149,75 @@ class _sellerHomeScreenState extends State<sellerHomeScreen> {
       appBar: AppBar(
         title: Text(DateFormat('MMMM yyyy').format(currentDate),), // Display selected month
         actions: [
-          TextButton(
-              onPressed: () {
-                showMonthlyTotalBottomSheet(
-                  context,
-                  sellerPhone: sellerPhone!,
-                  totalMorningMilk: morningMilk,
-                  totalEveningMilk: eveningMilk,
-                  month: currentDate,
-                  morningRate: morningRate,
-                  eveningRate: eveningRate,
-                );
-              },
-              child: Row(
-                children: [
-                  Icon(Icons.currency_rupee),
-                  Text(
-                    isLoading ? "Loading..." : "${sellerData.grandTotal}",
-                  ),
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: IconButton(
+                style: IconButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    minimumSize: Size(50, 40)
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Center(child: Text("Your QR Code",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),)),
+                      content: SizedBox(
+                        width: 200, // Set a width to constrain the QR
+                        height: 200, // Optional height
+                        child: Center(
+                          child: QrManager.generateQr(sellerPhone),
+                        ),
+                      ),
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              child: Text("Close",style: TextStyle(color: Colors.black),),
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  );
+                },
+                icon: Icon(Icons.qr_code_scanner)
+            ),
+          ),
 
-                ],
-              )
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: IconButton(
+                style: IconButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    minimumSize: Size(50, 40)
+                ),
+                onPressed: () {
+                  showMonthlyTotalBottomSheet(
+                    context,
+                    sellerPhone: sellerPhone!,
+                    totalMorningMilk: morningMilk,
+                    totalEveningMilk: eveningMilk,
+                    month: currentDate,
+                    morningRate: morningRate,
+                    eveningRate: eveningRate,
+                  );
+                },
+                icon: Row(
+                  children: [
+                    Icon(Icons.currency_rupee,color: Colors.white,),
+                    Text(
+                      isLoading
+                          ? "Loading..."
+                          :(grandTotal==0?"Not Yet Billed": "${sellerData.grandTotal}"),style: TextStyle(color: Colors.white),
+                    ),
+
+                  ],
+                )
+            ),
           ),
         ],
       ),
@@ -186,13 +235,6 @@ class _sellerHomeScreenState extends State<sellerHomeScreen> {
               decoration: BoxDecoration(
                 color: Colors.black87,
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.history),
-              title: Text("History (Comming Soon...)"),
-              onTap: () {
-                // Navigate to Milk Sales History Screen
-              },
             ),
             ListTile(
               leading: Icon(Icons.logout),
